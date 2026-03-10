@@ -1,0 +1,79 @@
+{
+  "name": "Vapi | SAH Kitchen | Send Email to Support Team Tool",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "1e5a5cc2-0cef-450a-ae17-b0675f23a591",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -416,
+        -192
+      ],
+      "id": "a316b399-e8bc-43b2-bb9e-7da80b2f3a22",
+      "name": "Webhook",
+      "webhookId": "1e5a5cc2-0cef-450a-ae17-b0675f23a591"
+    },
+    {
+      "parameters": {
+        "fromEmail": "xyz@gmail.com",
+        "toEmail": "xyz@gmail.com",
+        "subject": "New SAH Kitchen Support Ticket",
+        "html": "=User requirement: \"{{ $json.body.message.toolCalls[0].function.arguments.message }}\".\n\nUser email address: \"{{ $json.body.message.toolCallList[0].function.arguments.emai_id }}\".",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        32,
+        -192
+      ],
+      "id": "344ed2bb-cd0e-4f45-90f6-be53c42fb883",
+      "name": "Send email",
+      "webhookId": "74b86972-8cc6-476a-82af-21626ee6c0d9",
+      "credentials": {
+        "smtp": {
+          "id": "xT1cFYyIUsPc2UzS",
+          "name": "SAH Kitchen Support SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "866786ae-58ec-4d32-856a-2c524d160053",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "37ee74431af36e5f6e2177b0b6e0ba77f82f98e5f13559f1dbfcc6190c6b5601"
+  },
+  "id": "l2ELvyoK4gEw7Ijr",
+  "tags": [
+    {
+      "name": "SAH Kitchen V-Assistant",
+      "id": "tJ4n4YJkQB7lg58o",
+      "updatedAt": "2026-03-10T12:50:12.946Z",
+      "createdAt": "2026-03-10T12:50:12.946Z"
+    }
+  ]
+}

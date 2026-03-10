@@ -1,0 +1,144 @@
+{
+  "name": "Vapi | SAH Kitchen | Send Email to User Tool",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "7697c123-d0b0-48ca-a8f3-64b1ac080200",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -560,
+        -192
+      ],
+      "id": "17149d80-813d-43af-b35f-5ae01b3e2ae9",
+      "name": "Webhook",
+      "webhookId": "7697c123-d0b0-48ca-a8f3-64b1ac080200"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate and send a professional email to the user regarding their requirement: \"{{ $json.body.message.toolCalls[0].function.arguments.message }}\". The email should be polite, concise, and written in a professional tone.\nUse the recipient’s email address: \"{{ $json.body.message.toolCallList[0].function.arguments.emai_id }}\".\nSign off the message with:\nBest regards,\nSAH Kitchen Support Team",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -272,
+        -192
+      ],
+      "id": "2e1e5bcc-4942-4e27-bad5-bc243c5374a5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        80
+      ],
+      "id": "3c23de90-c09a-4fdc-adb0-c16c1baba74e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ah3AyC6bmcvPBNXi",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "xyz@gmail.com",
+        "toEmail": "xyz@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "html": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('HTML', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false,
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.emailSendTool",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        80
+      ],
+      "id": "88216607-e87f-4873-a793-502d595bad31",
+      "name": "Send email in Send Email",
+      "webhookId": "1ac256df-a37c-4a18-90f2-1c0cdc213293",
+      "credentials": {
+        "smtp": {
+          "id": "xT1cFYyIUsPc2UzS",
+          "name": "SAH Kitchen Support SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email in Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "86905fb9-e8e0-4302-a3a5-6de6134a802f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "37ee74431af36e5f6e2177b0b6e0ba77f82f98e5f13559f1dbfcc6190c6b5601"
+  },
+  "id": "SucDOhs62q8kJrrY",
+  "tags": [
+    {
+      "name": "SAH Kitchen V-Assistant",
+      "id": "tJ4n4YJkQB7lg58o",
+      "updatedAt": "2026-03-10T12:50:12.946Z",
+      "createdAt": "2026-03-10T12:50:12.946Z"
+    }
+  ]
+}

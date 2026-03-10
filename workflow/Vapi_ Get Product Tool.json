@@ -1,0 +1,127 @@
+{
+  "name": "Vapi | SAH Kitchen | Get Product Tool",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "7dc13fa2-833c-4f62-a88f-5210fddb47dd",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -544,
+        -192
+      ],
+      "id": "c69160fb-f358-4824-a43c-25f38a475d04",
+      "name": "Webhook",
+      "webhookId": "7dc13fa2-833c-4f62-a88f-5210fddb47dd"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n    \"results\": [\n        {\n            \"toolCallId\": \"{{ $('Webhook').item.json.body.message.toolCalls[0].id }}\",\n            \"result\": \"{{ $json.message }}\"\n        }\n    ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        -192
+      ],
+      "id": "2679ddd7-8ab5-47a7-a5d2-bc205f16585f",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "productId": "={{ $json.body.message.toolCalls[0].function.arguments.product_id }}"
+      },
+      "type": "n8n-nodes-base.wooCommerce",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        -192
+      ],
+      "id": "53393ec2-7aa3-470d-9186-d9ddd624b0e8",
+      "name": "Get a product",
+      "credentials": {
+        "wooCommerceApi": {
+          "id": "qpVE8B0a04QnMPQV",
+          "name": "SAH Kitchen Woo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import re\nimport json\n\n# Get product data\nproduct = items[0][\"json\"]\n\n# Extract safely\nproduct_id = product.get(\"id\", \"\")\ntitle = product.get(\"name\", \"\")\nprice = product.get(\"price\", \"\")\nsku = product.get(\"sku\", \"\")\nstock_status = product.get(\"stock_status\", \"\")\ndescription = product.get(\"description\", \"\")\npermalink = product.get(\"permalink\", \"\")\ntype = product.get(\"type\", \"\")\nsale_price = product.get(\"sale_price\", \"\")\nshipping_class = product.get(\"shipping_class\", \"\")\ncategory = \"\"\nif \"categories\" in product and len(product[\"categories\"]) > 0:\n    category = product[\"categories\"][0].get(\"name\", \"\")\n\n\n# Clean all text fields (remove special chars, HTML, etc.)\ndef clean(text):\n    if not text:\n        return \"\"\n    text = re.sub(r'<[^>]*>', '', str(text))        # remove HTML tags\n    text = re.sub(r'[^a-zA-Z0-9 .,:%()/-]', '', text)  # keep only safe characters\n    text = text.replace(\"\\n\", \" \").replace(\"\\r\", \" \")\n    text = re.sub(r'\\s+', ' ', text).strip()        # normalize spaces\n    return text\n\nproduct_id = clean(product_id)\ntitle = clean(title)\nprice = clean(price)\nsku = clean(sku)\nstock_status = clean(stock_status)\ndescription = clean(description)\npermalink = clean(permalink)\ntype = clean(type)\nsale_price = clean(sale_price)\nshipping_class = clean(shipping_class)\ncategory = clean(category)\n\n\n# Build message string\nmessage = (\n    f\"Product ID: {product_id}, \"\n    f\"Product title: {title}, \"\n    f\"Price: {price}, \"\n    f\"SKU: {sku}, \"\n    f\"Stock status: {stock_status}, \"\n    f\"URL: {permalink}. \"\n    f\"Description: {description}, \"\n    f\"Type: {type}, \"\n    f\"Sale Price: {sale_price}, \"\n    f\"Shipping: {shipping_class}, \"\n    f\"Category: {category}\"\n)\n\n# Ensure message is safe JSON string\nmessage_json_safe = json.dumps(message)[1:-1]  # escape properly but remove quotes\n\n# Return output\nreturn [{\"json\": {\"message\": message_json_safe}}]\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        -192
+      ],
+      "id": "e2f7ba0f-1dbf-493a-b797-dff4b81b6e15",
+      "name": "Code in Python (Beta)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get a product",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a product": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python (Beta)": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "640e6f95-6593-473d-b83c-5d7f44fc8701",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "37ee74431af36e5f6e2177b0b6e0ba77f82f98e5f13559f1dbfcc6190c6b5601"
+  },
+  "id": "mCyUPPRdjuPX822R",
+  "tags": [
+    {
+      "name": "SAH Kitchen V-Assistant",
+      "id": "tJ4n4YJkQB7lg58o",
+      "updatedAt": "2026-03-10T12:50:12.946Z",
+      "createdAt": "2026-03-10T12:50:12.946Z"
+    }
+  ]
+}

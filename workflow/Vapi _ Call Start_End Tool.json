@@ -1,0 +1,354 @@
+{
+  "name": "Vapi | SAH Kitchen | Call Start/End Tool",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "03464e33-52c2-48ad-92c8-0dd9d351129d",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f21be01d-5b80-4d76-85af-b217480efa98",
+      "name": "Webhook",
+      "webhookId": "03464e33-52c2-48ad-92c8-0dd9d351129d"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ZvTgsDcHAbs5OxL2Gx4PG26fBl6VsPcVnGsdTzhTZXE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZvTgsDcHAbs5OxL2Gx4PG26fBl6VsPcVnGsdTzhTZXE/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "PhoneNumber",
+              "lookupValue": "={{ $json.body.message.call.customer.number.substring(1) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8bae7fcf-2a58-43e4-b73b-161dcd2984b4",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VVym3egTu9EE5ra8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "29a9ac23-92b6-4c9d-976b-4219fb6ffde3",
+              "leftValue": "={{ $items().length.toString() }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        464,
+        0
+      ],
+      "id": "2685ae8b-02dd-4dd2-889b-bc0b9eb4b598",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"assistantId\": \"5f3b8637-e74c-4803-8a88-a48a7edef6cb\",\n  \"assistantOverrides\": {\n    \"variableValues\": {\n      \"firstName\": $json.firstName,\n      \"context\": $json.mergedSummary\n    }\n  }\n} }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        928,
+        112
+      ],
+      "id": "2b0f8032-9c2c-461d-9a7a-7a2a76beb03e",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"assistantId\": \"5f3b8637-e74c-4803-8a88-a48a7edef6cb\",\n  \"assistantOverrides\": {\n    \"variableValues\": {\n      \"firstName\": \"\",\n      \"context\": \"No previous conversations\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        752,
+        -128
+      ],
+      "id": "15958a66-aadf-469b-a976-fc34424e8d93",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "198ab3f5-aa1d-4934-b0b5-ac6582ab45a5",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        224
+      ],
+      "id": "d88b1088-2821-4f51-9cc6-8328357590f8",
+      "name": "Webhook1",
+      "webhookId": "198ab3f5-aa1d-4934-b0b5-ac6582ab45a5"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZvTgsDcHAbs5OxL2Gx4PG26fBl6VsPcVnGsdTzhTZXE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZvTgsDcHAbs5OxL2Gx4PG26fBl6VsPcVnGsdTzhTZXE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ConversationSummary": "={{ $json.body.message.summary }}",
+            "RecordingUrl": "={{ $json.body.message.recordingUrl }}",
+            "PhoneNumber": "={{ $json.body.message.customer.number }}",
+            "LastCall": "={{ $json.body.message.startedAt }}",
+            "EndReason": "={{ $json.body.message.endedReason }}",
+            "CallDuration (min)": "={{ $json.body.message.durationMinutes }}"
+          },
+          "matchingColumns": [
+            "PhoneNumber"
+          ],
+          "schema": [
+            {
+              "id": "PhoneNumber",
+              "displayName": "PhoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FirstName",
+              "displayName": "FirstName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ConversationSummary",
+              "displayName": "ConversationSummary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RecordingUrl",
+              "displayName": "RecordingUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LastCall",
+              "displayName": "LastCall",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CallDuration (min)",
+              "displayName": "CallDuration (min)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "EndReason",
+              "displayName": "EndReason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        224
+      ],
+      "id": "a6616897-751e-42d9-9ff2-ea872f17460c",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VVym3egTu9EE5ra8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop through all incoming items with _input.all()\nsummaries = []\nfirst_name = \"\"\n\nfor i, item in enumerate(_input.all()):\n    row = item.get(\"json\", {})\n\n    # Get first name from the first row\n    if i == 0:\n        first_name = row.get(\"FirstName\", \"\")\n\n    # Extract summary\n    summary = row.get(\"ConversationSummary\", \"\")\n    if summary and summary.strip():\n        summaries.append(summary.strip())\n\n# Merge summaries with separator\nmerged = \"\"\nif summaries:\n    merged = \"\\n\".join([f\"Summary {i+1}: {s}\" for i, s in enumerate(summaries)])\n\n# Return a single output item\nreturn {\n    \"firstName\": first_name,\n    \"mergedSummary\": merged\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        112
+      ],
+      "id": "ddd03dd2-54de-47aa-8a7a-14f6bb7af913",
+      "name": "Code in Python (Beta)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in Python (Beta)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python (Beta)": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "46d66398-c037-41eb-970d-3ae196528911",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "37ee74431af36e5f6e2177b0b6e0ba77f82f98e5f13559f1dbfcc6190c6b5601"
+  },
+  "id": "FSepJPnpSPPDySDS",
+  "tags": [
+    {
+      "name": "SAH Kitchen V-Assistant",
+      "id": "tJ4n4YJkQB7lg58o",
+      "updatedAt": "2026-03-10T12:50:12.946Z",
+      "createdAt": "2026-03-10T12:50:12.946Z"
+    }
+  ]
+}

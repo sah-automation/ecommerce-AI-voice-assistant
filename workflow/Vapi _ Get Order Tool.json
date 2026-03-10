@@ -1,0 +1,128 @@
+{
+  "name": "Vapi | SAH Kitchen | Get Order Tool",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a57f1787-0814-44ba-84bb-0cb7e8489ee2",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -864,
+        -192
+      ],
+      "id": "a205d612-94ff-451e-bd0b-4c953642acd0",
+      "name": "Webhook",
+      "webhookId": "a57f1787-0814-44ba-84bb-0cb7e8489ee2"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n    \"results\": [\n        {\n            \"toolCallId\": \"{{ $('Webhook').item.json.body.message.toolCalls[0].id }}\",\n            \"result\": \"{{ $json.message }}\"\n        }\n    ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        272,
+        -192
+      ],
+      "id": "ed524f3b-e3ac-4262-9f9c-9845886fcca8",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "resource": "order",
+        "operation": "get",
+        "orderId": "={{ $json.body.message.toolCalls[0].function.arguments.order_id }}"
+      },
+      "type": "n8n-nodes-base.wooCommerce",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        -192
+      ],
+      "id": "d58848d1-fef5-4a6d-9920-9afd515f47e3",
+      "name": "Get an order",
+      "credentials": {
+        "wooCommerceApi": {
+          "id": "qpVE8B0a04QnMPQV",
+          "name": "SAH Kitchen Woo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import re\nimport json\n\norder = items[0][\"json\"]\n\ndef clean(text):\n    if not text:\n        return \"\"\n    text = re.sub(r'<[^>]*>', '', str(text))\n    text = re.sub(r'[^a-zA-Z0-9 .,:%()/-]', '', text)\n    text = text.replace(\"\\n\", \" \").replace(\"\\r\", \" \")\n    text = re.sub(r'\\s+', ' ', text).strip()\n    return text\n\norder_id = clean(order.get(\"id\", \"\"))\nstatus = clean(order.get(\"status\", \"\"))\ntotal = clean(order.get(\"total\", \"\"))\ncurrency = clean(order.get(\"currency\", \"\"))\ndate_created = clean(order.get(\"date_created\", \"\"))\n\n# Get customer info if exists\nbilling = order.get(\"billing\", {})\nshipping = order.get(\"shipping\", {})\ncustomer_name = clean(f\"{shipping.get('first_name', '')} {shipping.get('last_name', '')}\")\ncustomer_email = clean(billing.get(\"email\", \"\"))\ncustomer_phone = clean(billing.get(\"phone\", \"\"))\ncustomer_shipping_address = clean(f\"{shipping.get('address_1', '')} {shipping.get('address_2', '')}, {shipping.get('city', '')} {shipping.get('state', '')} {shipping.get('country', '')} {shipping.get('postalcode', '')}\")\n\n# Get first ordered product name if exists\nfirst_product = \"\"\nif \"line_items\" in order and len(order[\"line_items\"]) > 0:\n    first_product = clean(order[\"line_items\"][0].get(\"name\", \"\"))\n\nmessage = (\n    f\"Order ID is {order_id}, \"\n    f\"Status is {status}, \"\n    f\"Total is {total} {currency}, \"\n    f\"Order date is {date_created}, \"\n    f\"Customer name is {customer_name}, \"\n    f\"Email is {customer_email}, \"\n    f\"Phone is {customer_phone}, \"\n    f\"Shipping Address is {customer_shipping_address}, \"\n    f\"First product ordered is {first_product}.\"\n)\n\nmessage_json_safe = json.dumps(message)[1:-1]\n\nreturn [{\"json\": {\"message\": message_json_safe}}]\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        -192
+      ],
+      "id": "90af60a1-4769-401f-a178-d0ce6e7a1a59",
+      "name": "Code in Python (Beta)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get an order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an order": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python (Beta)": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "70ab74f1-964a-456f-bd14-7caae58d2494",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "37ee74431af36e5f6e2177b0b6e0ba77f82f98e5f13559f1dbfcc6190c6b5601"
+  },
+  "id": "fk0efiMwsmU9KZn4",
+  "tags": [
+    {
+      "name": "SAH Kitchen V-Assistant",
+      "id": "tJ4n4YJkQB7lg58o",
+      "updatedAt": "2026-03-10T12:50:12.946Z",
+      "createdAt": "2026-03-10T12:50:12.946Z"
+    }
+  ]
+}

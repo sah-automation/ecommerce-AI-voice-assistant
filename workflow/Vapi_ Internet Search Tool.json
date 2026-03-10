@@ -1,0 +1,127 @@
+{
+  "name": "Vapi | SAH Kitchen | Internet Search Tool",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "f4712485-8fba-4f99-8fbd-b3510229bed6",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7acf7200-83e4-495a-ad7a-4e60b2390deb",
+      "name": "Webhook",
+      "webhookId": "f4712485-8fba-4f99-8fbd-b3510229bed6"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n    \"results\": [\n        {\n            \"toolCallId\": \"{{ $('Webhook').item.json.body.message.toolCalls[0].id }}\",\n            \"result\": \"{{ $json.message }}\"\n        }\n    ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        0
+      ],
+      "id": "7ccfdd99-5553-4cab-b7da-09670840d801",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "## Internet Search",
+        "height": 208,
+        "width": 336
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -48
+      ],
+      "id": "14ed9adc-358d-4e07-a9bb-a22bcb3bddab",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": "sonar-deep-research",
+        "messages": {
+          "message": [
+            {
+              "content": "=You are a part of Commercial Kitchen Consultancy team. Your primary goal is to search internet based on query provided to you, and output live results.",
+              "role": "system"
+            },
+            {
+              "content": "Query: {{}}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        288,
+        0
+      ],
+      "id": "07af902b-df1e-4055-a00e-3b7a7ed02cc5",
+      "name": "Message a model",
+      "credentials": {
+        "perplexityApi": {
+          "id": "KkMDMjyGrox18R29",
+          "name": "Perplexity account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e5fc6c1f-683f-474e-bfbf-b42e15a8979b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "37ee74431af36e5f6e2177b0b6e0ba77f82f98e5f13559f1dbfcc6190c6b5601"
+  },
+  "id": "gXOdUzmaVmNUZPkI",
+  "tags": [
+    {
+      "name": "SAH Kitchen V-Assistant",
+      "id": "tJ4n4YJkQB7lg58o",
+      "updatedAt": "2026-03-10T12:50:12.946Z",
+      "createdAt": "2026-03-10T12:50:12.946Z"
+    }
+  ]
+}

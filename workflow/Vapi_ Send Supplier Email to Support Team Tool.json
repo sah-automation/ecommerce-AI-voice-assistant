@@ -1,0 +1,79 @@
+{
+  "name": "Vapi | SAH Kitchen | Send Supplier Email to Support Team Tool",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ce581346-204f-40eb-9600-f4a9bde84792",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -592,
+        -192
+      ],
+      "id": "215a4305-adb0-4d4c-9a8d-fe859d62c9ba",
+      "name": "Webhook",
+      "webhookId": "ce581346-204f-40eb-9600-f4a9bde84792"
+    },
+    {
+      "parameters": {
+        "fromEmail": "xyz@gmail.com",
+        "toEmail": "xyz@gmail.com",
+        "subject": "SAH Kitchen New Supplier Call",
+        "html": "=Supplier Message Summary: \"{{ $json.body.message.toolCalls[0].function.arguments.message }}\".",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        -192
+      ],
+      "id": "29d884b3-ffe6-431b-abe4-7814734f7b5c",
+      "name": "Send email",
+      "webhookId": "69f36762-3d54-4cfd-b156-b6ab61e331c3",
+      "credentials": {
+        "smtp": {
+          "id": "xT1cFYyIUsPc2UzS",
+          "name": "SAH Kitchen Support SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e7c7c6e0-ac97-4d50-bc79-59db7898b61b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "37ee74431af36e5f6e2177b0b6e0ba77f82f98e5f13559f1dbfcc6190c6b5601"
+  },
+  "id": "TUBdh43ujWw4lee8",
+  "tags": [
+    {
+      "name": "SAH Kitchen V-Assistant",
+      "id": "tJ4n4YJkQB7lg58o",
+      "updatedAt": "2026-03-10T12:50:12.946Z",
+      "createdAt": "2026-03-10T12:50:12.946Z"
+    }
+  ]
+}
