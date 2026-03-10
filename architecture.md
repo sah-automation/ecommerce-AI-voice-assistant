@@ -1,6 +1,6 @@
 # Project Architecture: E-commerce AI Voice Assistant
 
-This project implements a sophisticated AI-powered voice assistant for **SAH Kitchen**, a commercial kitchen equipment provider. The system integrates **Vapi** for voice orchestration and **n8n** for backend logic, automation, and third-party integrations.
+This project implements a sophisticated AI-powered voice assistant for **Ecommerce** store. The system integrates **Vapi** for voice orchestration and **n8n** for backend logic, automation, and third-party integrations.
 
 ## System Overview
 
@@ -64,3 +64,4 @@ Each Vapi tool corresponds to an n8n workflow. The workflows are triggered via P
 - `/vapi`: Contains the `master-prompt.txt` for the AI persona.
 - `/workflow`: Contains the exported n8n workflow JSON files.
 - `/screenshot`: Visual documentation of the tool configurations.
+
